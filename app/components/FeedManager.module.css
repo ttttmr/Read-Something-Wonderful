@@ -1,0 +1,23 @@
+.feedContainer {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+}
+
+.mainScroll {
+  flex: 1;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for main scroll if desired, or verify if user wants it active */
+.mainScroll::-webkit-scrollbar {
+  width: 8px;
+}
+.mainScroll::-webkit-scrollbar-thumb {
+  background: #333;
+}

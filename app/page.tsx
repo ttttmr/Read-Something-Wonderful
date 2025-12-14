@@ -1,66 +1,37 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import FeedManager from './components/FeedManager';
+import { RSWEntry } from './types';
 
-export default function Home() {
+interface ApiResponse {
+  results: RSWEntry[];
+  next: string | null;
+}
+
+// Fetch all entries (handling pagination)
+async function getAllEntries(): Promise<RSWEntry[]> {
+  let allResults: RSWEntry[] = [];
+  let nextUrl: string | null = 'https://api.getmatter.com/tools/api/rsw_entries/';
+
+  try {
+    while (nextUrl) {
+      const res = await fetch(nextUrl, { next: { revalidate: 3600 } });
+      if (!res.ok) throw new Error('Failed to fetch data');
+      const data: ApiResponse = await res.json();
+      allResults = [...allResults, ...data.results];
+      nextUrl = data.next;
+    }
+    // Sort by ID descending (newest first based on ID)
+    allResults.sort((a, b) => b.id - a.id);
+  } catch (error) {
+    console.error('Error fetching entries:', error);
+  }
+
+  return allResults;
+}
+
+export default async function Home() {
+  const entries = await getAllEntries();
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <FeedManager entries={entries} />
   );
 }

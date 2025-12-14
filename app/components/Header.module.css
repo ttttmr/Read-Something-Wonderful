@@ -1,0 +1,34 @@
+.header {
+  padding: 3rem 0;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 1400px;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Source site has logo on left? Or center? Let's check capture. Actually let's assume standard left or center. Center for feed is safe */
+  align-items: center;
+  text-align: center;
+}
+
+.logo {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--secondary);
+  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
